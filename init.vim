@@ -66,10 +66,11 @@
     " Clear Search by pressing 
     map <leader><space> :let @/=''<cr> " clear search
 
-
     " Stay in visual mode when indenting code
     vnoremap < <gv
     vnoremap > >gv
+
+    set wildignore=*.swp,*.bak,*.pyc,*.class,*.jar,*.gif,*.png,*.jpg,*/node_modules/*
 
 
 
