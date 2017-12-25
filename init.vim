@@ -47,10 +47,6 @@
     set splitright " Split vertical window from the right
     set splitbelow " Split horizontal window from below
 
-    " Make vim show indentation and trailing whitespace
-    set list 
-    set listchars=tab:>-,trail:.
-
     set formatoptions+=j  " Makes line joins better
 
     " Show a vertical line to show where 100 chars are
@@ -70,7 +66,7 @@
     vnoremap < <gv
     vnoremap > >gv
 
-    set wildignore=*.swp,*.bak,*.pyc,*.class,*.jar,*.gif,*.png,*.jpg,*/node_modules/*
+    set wildignore=*.swp,*.bak,*.pyc,*.class,*.jar,*.gif,*.png,*.jpg,*/node_modules/*,*.mp4,*.mpg
 
 
 
@@ -93,9 +89,6 @@
     " Sets json to use 2 spaces
     autocmd FileType json setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 
-
-    
-
 " PLUGIN CONFIG
     " Custom signs for error and warning
     let g:ale_sign_error = '❌'
@@ -113,7 +106,7 @@
     let g:ale_fix_on_save = 1
 
     " Selecting exactly what fixers to use according to specific file
-    let g:ale_fixers = {'javascript': ['prettier'], 'python': ['yapf'], 'c': ['clang-format']}
+    let g:ale_fixers = {'javascript': ['prettier'], 'python': ['yapf'], 'c': ['clang-format'], 'javascript.jsx': ['prettier'], 'json': ['prettier']}
 
     "  Selecting only specific linters to use
     let g:ale_linters = {'go': ['golint', 'go vet', 'go build'], 
@@ -142,19 +135,27 @@
     " Disable polygot syntax highlighting for markdown because it stuffs it up.
     let g:polyglot_disabled = ['markdown'] 
 
-    
+    let g:LanguageClient_serverCommands = {
+        \ 'javascript': ['javascript-typescript-stdio'],
+        \ 'javascript.jsx': ['javascript-typescript-stdio'],
+        \ }
+
 " MAPPING KEYS 
     " Map ctrl+c + n to :cnext  (Go to next error in vim-go)
     map <C-n> :cnext<CR>
 
     " Map ctrl+C + m to :cprevious (Go to previous error in vim-go)
-    map <C-m> :cprevious<CR>
+    map <C-m> :cprevious<cr>
 
     " Remap leader (',') + a to :cclose. This will close error window
-    nnoremap <leader>a :cclose<CR> 
+    nnoremap <leader>a :cclose<cr> 
+    
+    " Source vimrc easier. sv stands for 'source vimrc'
+    nnoremap <leader>sv :source $MYVIMRC <cr>
 
-    " Run ohly on go files and normal pa the leader + r to :GoRun
-    autocmd FileType go nmap <leader>r  <Plug>(go-run)
+    " Mappings for vim-ale to go to the next error 
+    nnoremap <leader>aj :ALENext<cr>
+    nnoremap <leader>ak :ALEPrevious<cr> 
 
     " Make navigating between splits easier
     nnoremap <C-j> <C-w><C-j>
@@ -162,11 +163,17 @@
     nnoremap <C-l> <C-w><C-l>
     nnoremap <C-h> <C-w><C-h>
 
+    " Makes tab switching faster
     nnoremap <C-t> :tabnew <cr>
     nnoremap <C-c>j :tabnext <cr>
     nnoremap <C-c>k :tabprevious <cr>
+    
+
+    " Refreshes the files available in command-t
+    nnoremap <Leader>f :CommandTFlush <cr>
 
     " Press ',' + 'r' to run program in certain language
+    autocmd FileType go nmap <leader>r  <Plug>(go-run)
     autocmd FileType python nnoremap <buffer> <leader>r :exec '!python3' shellescape(@%, 1)<cr>
     autocmd FileType javascript nnoremap <buffer> <leader>r :exec '!node' shellescape(@%, 1)<cr>
     autocmd FileType c nnoremap <buffer> <leader>r :exec '!gcc -o ' shellescape(expand('%:r'), 1) shellescape(expand('%'), 1) '&& ./' . shellescape(expand('%:r'), 1)<cr>
