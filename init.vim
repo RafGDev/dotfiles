@@ -1,9 +1,9 @@
 " PLUG LIST
     call plug#begin()
-    Plug 'w0rp/ale' " Awesome linter
     Plug 'roxma/nvim-completion-manager' " Async autocompletion
+    Plug 'w0rp/ale' " Awesome linter
+    Plug 'roxma/nvim-cm-tern' 
     Plug 'Shougo/neco-vim' " Vim language pack for nvim-completion-manger 
-    Plug 'roxma/nvim-cm-tern' " Javascript source for nvim-completion-manager
     Plug 'vim-airline/vim-airline' " Nice tabline
     Plug 'vim-airline/vim-airline-themes' " Nice themes for vim-airline
     Plug 'scrooloose/nerdtree' " Nice tree explorer
@@ -31,11 +31,14 @@
     set termguicolors
 
     let mapleader = "," " Map leader command
+    let maplocalleader = " " " Map local leader command
     filetype plugin indent on
     set clipboard=unnamedplus " Copy and paste from clipboard
+
     set mouse=a " Allow mouse support
     set nowrap " Allow lines to be as long as possible and not cut off
     set noswapfile " Don't make swap file when another vim instance is open
+    set synmaxcol=300 " Stop drawing after line reaches longer than 300 chars
     set history=50 " Limits the history of commands that vim saves to 50
     set autoread " Reload file changes outside of vim
     set nobackup " So vim doesn't create a backup
@@ -57,7 +60,9 @@
 
     set guicursor= " Uses the default cursor when in insert mode
     set foldmethod=indent " Will fold when more then two lines are indented 
-    set foldnestmax=1  " Only nest the folds by 1. (So when you open fold, all cold shows up)
+    set foldnestmax=2  " Only nest the folds by 1. (So when you open fold, all cold shows up)
+
+    set tags=./tags;$HOME " Looks for ctags file recursively until reaching $HOME
 
     " Clear Search by pressing 
     map <leader><space> :let @/=''<cr> " clear search
@@ -66,7 +71,7 @@
     vnoremap < <gv
     vnoremap > >gv
 
-    set wildignore=*.swp,*.bak,*.pyc,*.class,*.jar,*.gif,*.png,*.jpg,*/node_modules/*,*.mp4,*.mpg
+    set wildignore=*.swp,*.bak,*.pyc,*.class,*.jar,*.gif,*.png,*.jpg,*/node_modules/*,*.mp4,*.mpg,*.ts
 
 
 
@@ -88,6 +93,8 @@
 
     " Sets json to use 2 spaces
     autocmd FileType json setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+
+    autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en_gb " Set spell checking to English Great Britain
 
 " PLUGIN CONFIG
     " Custom signs for error and warning
@@ -114,7 +121,8 @@
           \ 'python': ['pylint'], 
           \ 'json': ['jsonlint'],
           \ 'html': ['htmlhint'],
-          \ 'css': []
+          \ 'css': [],
+          \ 'docker': ['hadolint']
           \  }
 
 
@@ -135,23 +143,12 @@
     " Disable polygot syntax highlighting for markdown because it stuffs it up.
     let g:polyglot_disabled = ['markdown'] 
 
-    let g:LanguageClient_serverCommands = {
-        \ 'javascript': ['javascript-typescript-stdio'],
-        \ 'javascript.jsx': ['javascript-typescript-stdio'],
-        \ }
-
-" MAPPING KEYS 
-    " Map ctrl+c + n to :cnext  (Go to next error in vim-go)
-    map <C-n> :cnext<CR>
-
-    " Map ctrl+C + m to :cprevious (Go to previous error in vim-go)
-    map <C-m> :cprevious<cr>
-
-    " Remap leader (',') + a to :cclose. This will close error window
-    nnoremap <leader>a :cclose<cr> 
-    
+"MAPPING KEYS 
     " Source vimrc easier. sv stands for 'source vimrc'
     nnoremap <leader>sv :source $MYVIMRC <cr>
+
+    " Make it easier to open up $MYVIMRC (stands for open vimrc)
+    nnoremap <leader>ev :vsplit $MYVIMRC <cr>
 
     " Mappings for vim-ale to go to the next error 
     nnoremap <leader>aj :ALENext<cr>
@@ -167,14 +164,27 @@
     nnoremap <C-t> :tabnew <cr>
     nnoremap <C-c>j :tabnext <cr>
     nnoremap <C-c>k :tabprevious <cr>
-    
 
     " Refreshes the files available in command-t
     nnoremap <Leader>f :CommandTFlush <cr>
 
+    " Remap za to zA and zA to za because I i'll use recursive open more
+    nnoremap za zA
+    nnoremap zA za
+
+    " Map leader + n to toggle nerdtree faster
+    nnoremap <leader>n :NERDTreeToggle <cr>
+
+    " Update tags file
+    nnoremap <leader>u :!ctags -R .<cr>
+
+    " Open :CommandTTag without typing it
+    nnoremap <leader>d :CommandTTag <cr>
+
+
     " Press ',' + 'r' to run program in certain language
-    autocmd FileType go nmap <leader>r  <Plug>(go-run)
-    autocmd FileType python nnoremap <buffer> <leader>r :exec '!python3' shellescape(@%, 1)<cr>
-    autocmd FileType javascript nnoremap <buffer> <leader>r :exec '!node' shellescape(@%, 1)<cr>
-    autocmd FileType c nnoremap <buffer> <leader>r :exec '!gcc -o ' shellescape(expand('%:r'), 1) shellescape(expand('%'), 1) '&& ./' . shellescape(expand('%:r'), 1)<cr>
-    autocmd FileType java nnoremap <buffer> <leader>r :exec '!javac' shellescape(expand('%'), 1) '&& java' shellescape(expand('%:r'), 1)<cr>
+    autocmd FileType go nnoremap <localleader>r  <Plug>(go-run)
+    autocmd FileType python nnoremap <buffer> <localleader>r execute '!python3' shellescape(@%, 1)<cr>
+    autocmd FileType javascript nnoremap <buffer> <localleader>r :execute '!node' shellescape(@%, 1)<cr>
+    autocmd FileType c nnoremap <buffer> <localleader>r :execute '!gcc -o ' shellescape(expand('%:r'), 1) shellescape(expand('%'), 1) '&& ./' . shellescape(expand('%:r'), 1)<cr>
+    autocmd FileType java nnoremap <buffer> <localleader>r :execute '!javac' shellescape(expand('%'), 1) '&& java' shellescape(expand('%:r'), 1)<cr>
