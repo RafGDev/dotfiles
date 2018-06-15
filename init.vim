@@ -10,6 +10,7 @@
     Plug 'wincent/command-t' " Fuzzy finder for vim
     Plug 'sheerun/vim-polyglot' " Solid language packs
     Plug 'ap/vim-css-color' " Shows css colors in css files
+    Plug 'chriskempson/base16-vim'
     Plug 'joshdick/onedark.vim' " The best colorscheme ever
     Plug 'scrooloose/nerdcommenter' " Awesome commenting for vim
     Plug 'Valloric/MatchTagAlways' " Show starting and finishing tags in html
@@ -143,6 +144,7 @@
     " Disable polygot syntax highlighting for markdown because it stuffs it up.
     let g:polyglot_disabled = ['markdown'] 
 
+    
 "MAPPING KEYS 
     " Source vimrc easier. sv stands for 'source vimrc'
     nnoremap <leader>sv :source $MYVIMRC <cr>
@@ -184,7 +186,7 @@
 
     " Press ',' + 'r' to run program in certain language
     autocmd FileType go nnoremap <localleader>r  <Plug>(go-run)
-    autocmd FileType python nnoremap <buffer> <localleader>r execute '!python3' shellescape(@%, 1)<cr>
-    autocmd FileType javascript nnoremap <buffer> <localleader>r :execute '!node' shellescape(@%, 1)<cr>
+    autocmd FileType python nnoremap <buffer><localleader>r execute '!python3' shellescape(@%, 1)<cr>
+    autocmd FileType javascript nnoremap <buffer><localleader>r :execute '!node' shellescape(@%, 1)<cr>
     autocmd FileType c nnoremap <buffer> <localleader>r :execute '!gcc -o ' shellescape(expand('%:r'), 1) shellescape(expand('%'), 1) '&& ./' . shellescape(expand('%:r'), 1)<cr>
     autocmd FileType java nnoremap <buffer> <localleader>r :execute '!javac' shellescape(expand('%'), 1) '&& java' shellescape(expand('%:r'), 1)<cr>
