@@ -3,11 +3,12 @@
     Plug 'roxma/nvim-completion-manager' " Async autocompletion
     Plug 'w0rp/ale' " Awesome linter
     Plug 'roxma/nvim-cm-tern' 
+    Plug 'roxma/ncm-clang'
     Plug 'Shougo/neco-vim' " Vim language pack for nvim-completion-manger 
+    "Plug 'terryma/vim-smooth-scroll'
     Plug 'vim-airline/vim-airline' " Nice tabline
     Plug 'vim-airline/vim-airline-themes' " Nice themes for vim-airline
     Plug 'scrooloose/nerdtree' " Nice tree explorer
-    Plug 'wincent/command-t' " Fuzzy finder for vim
     Plug 'sheerun/vim-polyglot' " Solid language packs
     Plug 'ap/vim-css-color' " Shows css colors in css files
     Plug 'chriskempson/base16-vim'
@@ -18,6 +19,7 @@
     Plug 'honza/vim-snippets' " Snippet sources for ultisnips
     Plug 'epilande/vim-react-snippets' " React.js snippets
     Plug 'SirVer/ultisnips' " Snippet Engine for vim
+    set rtp+=/usr/local/opt/fzf
     call plug#end()
 
 " NVIM CONFIG 
@@ -118,13 +120,14 @@
 
     "  Selecting only specific linters to use
     let g:ale_linters = {'go': ['golint', 'go vet', 'go build'], 
-          \ 'javascript': ['eslint'], 
-          \ 'python': ['pylint'], 
-          \ 'json': ['jsonlint'],
-          \ 'html': ['htmlhint'],
-          \ 'css': [],
-          \ 'docker': ['hadolint']
-          \  }
+	  \ 'javascript': ['eslint'], 
+	  \ 'python': ['pyls'], 
+	  \ 'c': ['clang'], 
+	  \ 'json': ['jsonlint'],
+	  \ 'html': ['htmlhint'],
+	  \ 'css': [],
+	  \ 'docker': ['hadolint']
+	  \  }
 
 
     " Set so that ale does not lint on enter
@@ -143,6 +146,9 @@
 
     " Disable polygot syntax highlighting for markdown because it stuffs it up.
     let g:polyglot_disabled = ['markdown'] 
+
+"    noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 1)<CR>
+    "noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0 , 1)<CR>
 
     
 "MAPPING KEYS 
@@ -168,25 +174,15 @@
     nnoremap <C-c>k :tabprevious <cr>
 
     " Refreshes the files available in command-t
-    nnoremap <Leader>f :CommandTFlush <cr>
+    nnoremap <Leader>t :FZF <cr>
 
     " Remap za to zA and zA to za because I i'll use recursive open more
     nnoremap za zA
     nnoremap zA za
 
     " Map leader + n to toggle nerdtree faster
-    nnoremap <leader>n :NERDTreeToggle <cr>
-
-    " Update tags file
-    nnoremap <leader>u :!ctags -R .<cr>
-
-    " Open :CommandTTag without typing it
-    nnoremap <leader>d :CommandTTag <cr>
-
-
-    " Press ',' + 'r' to run program in certain language
-    autocmd FileType go nnoremap <localleader>r  <Plug>(go-run)
-    autocmd FileType python nnoremap <buffer><localleader>r execute '!python3' shellescape(@%, 1)<cr>
-    autocmd FileType javascript nnoremap <buffer><localleader>r :execute '!node' shellescape(@%, 1)<cr>
-    autocmd FileType c nnoremap <buffer> <localleader>r :execute '!gcc -o ' shellescape(expand('%:r'), 1) shellescape(expand('%'), 1) '&& ./' . shellescape(expand('%:r'), 1)<cr>
     autocmd FileType java nnoremap <buffer> <localleader>r :execute '!javac' shellescape(expand('%'), 1) '&& java' shellescape(expand('%:r'), 1)<cr>
+    autocmd FileType c nnoremap <buffer> <leader>r :execute '!gcc'shellescape(expand('%'), 1) '&& ./a.out' <cr>
+   
+
+
